@@ -1,0 +1,20 @@
+create table earthquakes (
+				 magnitude float(2), 
+				 place varchar(64),  
+				 earthquaketime bigint, 
+				 updatetime bigint, 
+				 tz int, 
+				 url varchar(256), 
+				 detail varchar(256), 
+				 felt int, 
+				 cdi float(2), 
+				 tsunami int, 
+				 sig int, 
+				 code varchar(24), 
+				 ids varchar(24), 
+				 type varchar(32), 
+				 title varchar(256), 
+				 id varchar(32) primary key,
+				 longitude decimal(9,6), 
+				 latitude decimal(9,6)
+				 )
