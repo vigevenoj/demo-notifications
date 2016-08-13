@@ -1,4 +1,4 @@
-package com.sharkbaitextraordinaire.dao;
+package com.sharkbaitextraordinaire.bootnotifier.dao;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import com.sharkbaitextraordinaire.model.Earthquake;
+import com.sharkbaitextraordinaire.bootnotifier.model.Earthquake;
 
 @Component
 public class EarthquakeDAO {

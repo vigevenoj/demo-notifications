@@ -1,4 +1,4 @@
-package com.sharkbaitextraordinaire.model;
+package com.sharkbaitextraordinaire.bootnotifier.model;
 
 import org.geojson.Point;
 import org.geojson.Feature;
