@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import com.sharkbaitextraordinaire.bootnotifier.model.MonitoredLocation;
 
+@Component
 public class MonitoredLocationDAO {
 
 	@Autowired
