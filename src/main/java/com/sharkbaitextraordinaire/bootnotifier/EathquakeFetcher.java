@@ -73,6 +73,7 @@ public class EathquakeFetcher {
 							} catch (EmptyResultDataAccessException e) {
 								// The quake does not exist, so insert it
 								dao.insert(quake);
+								logger.debug("inserted quake with id '" + quake.getId() + "' into database");
 								appconfig.earthquakeQueue().put(quake);
 								logger.debug("queued a quake (" + appconfig.earthquakeQueue().size() + ")");
 							}
