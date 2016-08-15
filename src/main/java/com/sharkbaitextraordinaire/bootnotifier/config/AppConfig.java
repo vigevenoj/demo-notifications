@@ -14,4 +14,9 @@ public class AppConfig {
     public LinkedBlockingQueue<Earthquake> earthquakeQueue() {
         return new LinkedBlockingQueue<Earthquake>();
     }
+	
+	@Bean
+	public BridgeClientConfig bridgeClientConfig() {
+		return new BridgeClientConfig();
+	}
 }
