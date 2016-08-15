@@ -1,9 +1,7 @@
 package com.sharkbaitextraordinaire.bootnotifier;
 
 import java.io.IOException;
-import java.util.concurrent.LinkedBlockingQueue;
 
-import javax.annotation.Resource;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
