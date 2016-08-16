@@ -19,4 +19,9 @@ public class AppConfig {
 	public BridgeClientConfig bridgeClientConfig() {
 		return new BridgeClientConfig();
 	}
+	
+	@Bean
+	public OwntracksConfig owntracksConfig() {
+		return new OwntracksConfig();
+	}
 }
