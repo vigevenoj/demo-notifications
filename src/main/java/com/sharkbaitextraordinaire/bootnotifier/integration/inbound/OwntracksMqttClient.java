@@ -43,6 +43,12 @@ public class OwntracksMqttClient implements CommandLineRunner, MqttCallback {
 	private OwntracksConfig config;
 	MqttClient client;
 	MqttConnectOptions connectionOptions;
+	ObjectMapper mapper;
+	
+	public OwntracksMqttClient() {
+		mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 	
 	@Override
 	public void run(String... arg0) throws Exception {
@@ -122,8 +128,6 @@ public class OwntracksMqttClient implements CommandLineRunner, MqttCallback {
 		logger.info(payload);
 		
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			LocationUpdate update = mapper.readValue(payload, LocationUpdate.class);
 			logger.info(update.toString());
 			
