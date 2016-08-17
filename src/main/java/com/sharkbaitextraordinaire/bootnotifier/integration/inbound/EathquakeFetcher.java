@@ -1,4 +1,4 @@
-package com.sharkbaitextraordinaire.bootnotifier;
+package com.sharkbaitextraordinaire.bootnotifier.integration.inbound;
 
 import java.io.IOException;
 
