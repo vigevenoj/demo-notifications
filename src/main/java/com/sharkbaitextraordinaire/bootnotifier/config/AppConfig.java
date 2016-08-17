@@ -24,4 +24,19 @@ public class AppConfig {
 	public OwntracksConfig owntracksConfig() {
 		return new OwntracksConfig();
 	}
+	
+	@Bean
+	public PushoverConfig pushoverConfig() {
+		return new PushoverConfig();
+	}
+	
+	@Bean
+	public SlackConfig slackConfig() {
+		return new SlackConfig();
+	}
+	
+	@Bean
+	public HueConfig hueConfig() {
+		return new HueConfig();
+	}
 }
