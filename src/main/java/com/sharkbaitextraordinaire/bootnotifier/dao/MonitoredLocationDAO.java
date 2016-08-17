@@ -17,12 +17,14 @@ public class MonitoredLocationDAO {
 	
 	public List<MonitoredLocation> findAll() {
 		String sql = "select name, longitude, latitude from monitoredlocations";
-		return jdbcTemplate.query(sql, new BeanPropertyRowMapper<MonitoredLocation>(MonitoredLocation.class));
+		return jdbcTemplate.query(sql, 
+				new BeanPropertyRowMapper<MonitoredLocation>(MonitoredLocation.class));
 	}
 	
 	public MonitoredLocation findByName(String name) {
 		String sql = "select name, longitude, latitude from monitoredlocations where name = ?";
-		return jdbcTemplate.queryForObject(sql, new Object[] { name }, new BeanPropertyRowMapper<MonitoredLocation>(MonitoredLocation.class));
+		return jdbcTemplate.queryForObject(sql, new Object[] { name }, 
+				new BeanPropertyRowMapper<MonitoredLocation>(MonitoredLocation.class));
 	}
 	
 	public void insert(MonitoredLocation location) {
@@ -34,5 +36,15 @@ public class MonitoredLocationDAO {
 				location.getName(), location.getLongitude(), location.getLatitude() 
 				});
 				
+	}
+	
+	public void update(MonitoredLocation location) {
+		String sql = "update monitoredlocations set latitude = ?, "
+				+ "longitude = ? "
+				+ "where name = ?";
+		jdbcTemplate.update(sql, new Object[] { 
+				location.getLatitude(), 
+				location.getLongitude(), 
+				location.getName() });
 	}
 }
