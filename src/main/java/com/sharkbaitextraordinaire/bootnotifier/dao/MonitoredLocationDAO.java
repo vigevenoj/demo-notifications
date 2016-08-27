@@ -3,6 +3,7 @@ package com.sharkbaitextraordinaire.bootnotifier.dao;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -23,8 +24,13 @@ public class MonitoredLocationDAO {
 	
 	public MonitoredLocation findByName(String name) {
 		String sql = "select name, longitude, latitude from monitoredlocations where name = ?";
-		return jdbcTemplate.queryForObject(sql, new Object[] { name }, 
-				new BeanPropertyRowMapper<MonitoredLocation>(MonitoredLocation.class));
+		try {
+			return jdbcTemplate.queryForObject(sql, new Object[] { name }, 
+					new BeanPropertyRowMapper<MonitoredLocation>(MonitoredLocation.class));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
+		
 	}
 	
 	public void insert(MonitoredLocation location) {
