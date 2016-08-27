@@ -20,11 +20,21 @@ public class LocationUpdateController {
 	
 	@RequestMapping(method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public List<LocationUpdate> findAll() {
-		return dao.findAll();
+		List<LocationUpdate> locations = dao.findAll();
+		if (locations.isEmpty()) {
+			return null;
+			// return 204 no content
+		}
+		return locations;
 	}
 	
 	@RequestMapping(value = "/latest", method = RequestMethod.GET)
 	public LocationUpdate latest() {
+		LocationUpdate location = dao.findLatest();
+		if (location == null) {
+			return null;
+			// return 204 no content or 404 not found?
+		}
 		return dao.findLatest();
 	}
 }

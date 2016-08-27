@@ -2,10 +2,7 @@ package com.sharkbaitextraordinaire.bootnotifier.dao;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +13,6 @@ public class LocationUpdateDAO {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
-	private static final Logger logger = LoggerFactory.getLogger(LocationUpdateDAO.class);
 	
 	public List<LocationUpdate> findAll() {
 		String sql = "select _type, lat, lon, acc, tst, batt, event from locationupdates order by tst desc";
