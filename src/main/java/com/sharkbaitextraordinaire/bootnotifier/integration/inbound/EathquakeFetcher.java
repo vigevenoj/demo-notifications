@@ -64,11 +64,9 @@ public class EathquakeFetcher {
 					if (g instanceof Point) {
 						try {
 							Earthquake quake = new Earthquake(feature);
-							// This try-catch on empty data exception feels dirty
-							try {
-								dao.findById(quake.getId());
+							if (null != dao.findById(quake.getId())) {
 								logger.debug("quake " + quake.getId() + " was already seen");
-							} catch (EmptyResultDataAccessException e) {
+							} else {
 								// The quake does not exist, so insert it
 								dao.insert(quake);
 								logger.debug("inserted quake with id '" + quake.getId() + "' into database");

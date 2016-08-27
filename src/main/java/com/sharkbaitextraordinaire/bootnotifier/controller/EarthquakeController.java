@@ -2,6 +2,8 @@ package com.sharkbaitextraordinaire.bootnotifier.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,10 +27,13 @@ public class EarthquakeController {
 	@Autowired
 	EarthquakeDAO dao;
 	
+	private static final Logger logger = LoggerFactory.getLogger(EarthquakeController.class);
+	
 	@RequestMapping(method = RequestMethod.GET, produces=MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<List<Earthquake>> findAll() {
 		List<Earthquake> earthquakes = dao.findAllEarthQuakes();
 		if (earthquakes.isEmpty()) {
+			logger.warn("No earthquakes found in database");
 			return new ResponseEntity<List<Earthquake>>(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<List<Earthquake>>(earthquakes, HttpStatus.OK);
