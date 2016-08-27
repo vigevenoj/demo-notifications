@@ -5,6 +5,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -27,7 +28,11 @@ public class EarthquakeDAO {
 	
 	public Earthquake findById(String id) {
 		String sql = "select magnitude, place, earthquaketime, updatetime, tz, url, detail, felt, cdi, tsunami, sig, code, ids, type, title, id, longitude, latitude from earthquakes where id = ?";
-		return jdbcTemplate.queryForObject(sql, new Object[] { id }, new BeanPropertyRowMapper<Earthquake>(Earthquake.class));
+		try {
+			return jdbcTemplate.queryForObject(sql, new Object[] { id }, new BeanPropertyRowMapper<Earthquake>(Earthquake.class));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 	
 	public void insert(Earthquake earthquake) {
