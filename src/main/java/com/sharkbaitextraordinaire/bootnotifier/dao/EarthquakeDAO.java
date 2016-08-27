@@ -20,7 +20,7 @@ public class EarthquakeDAO {
 	private static final Logger logger = LoggerFactory.getLogger(EarthquakeDAO.class);
 	
 	public List<Earthquake> findAllEarthQuakes() {
-		logger.warn("querying for earthquakes");
+		logger.debug("querying for earthquakes");
 		String sql = "select magnitude, place, earthquaketime, updatetime, tz, url, detail, felt, cdi, tsunami, sig, code, ids, type, title, id, longitude, latitude from earthquakes order by earthquaketime desc";
 		List<Earthquake> earthquakes = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Earthquake>(Earthquake.class));
 		return earthquakes;
