@@ -71,4 +71,11 @@ public class AppConfig {
 	public HueConfig hueConfig() {
 		return new HueConfig();
 	}
+	
+	/**
+	 * Configuration for earthquake analysis and notifications
+	 */
+	@Bean EarthquakeAnalysisConfig earthquakeAnalysisConfig() {
+		return new EarthquakeAnalysisConfig();
+	}
 }
