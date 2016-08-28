@@ -22,14 +22,14 @@ public class EarthquakeDAO {
 	public List<Earthquake> findAllEarthQuakes() {
 		logger.debug("querying for earthquakes");
 		String sql = "select magnitude, place, earthquaketime, updatetime, tz, url, detail, felt, cdi, tsunami, sig, code, ids, type, title, id, longitude, latitude from earthquakes order by earthquaketime desc";
-		List<Earthquake> earthquakes = jdbcTemplate.query(sql, new BeanPropertyRowMapper<Earthquake>(Earthquake.class));
+		List<Earthquake> earthquakes = jdbcTemplate.query(sql, new EarthquakeRowMapper());
 		return earthquakes;
 	}
 	
 	public Earthquake findById(String id) {
 		String sql = "select magnitude, place, earthquaketime, updatetime, tz, url, detail, felt, cdi, tsunami, sig, code, ids, type, title, id, longitude, latitude from earthquakes where id = ?";
 		try {
-			return jdbcTemplate.queryForObject(sql, new Object[] { id }, new BeanPropertyRowMapper<Earthquake>(Earthquake.class));
+			return jdbcTemplate.queryForObject(sql, new Object[] { id }, new EarthquakeRowMapper());
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}
