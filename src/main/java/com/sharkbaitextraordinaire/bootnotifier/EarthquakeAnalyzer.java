@@ -43,7 +43,7 @@ public class EarthquakeAnalyzer {
 	@Autowired
 	private SlackConfig slackConfig;
 	@Autowired
-	private PushoverConfig pushoverConfig;
+	private PushoverConfig pushoverConfig; // TODO implement pushover setup
 	@Autowired 
 	LocationUpdateDAO locationDao;
 	@Autowired
@@ -125,7 +125,7 @@ public class EarthquakeAnalyzer {
 		if (distance <= analysisConfig.getWorryDistanceThreshold()) { 
 			// send notification
 			logger.error(quake.getTitle() + " is within WORRY threshold at " + nf.format(distance) + "km");
-			// send pushover notification
+			// TODO send pushover notification
 			postToSlack("Worrisome " + quake.getTitle() + " is " + nf.format(distance) + "km from " + location.getName()
 			+ ". For more details see<" + quake.getUrl() + ">");
 		} else if (distance <= analysisConfig.getInterestDistanceThreshold()) { 
