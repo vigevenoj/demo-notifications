@@ -41,6 +41,10 @@ public class HueIntegration {
 
 		connectToLastKnownAccessPoint();
 	}
+	
+	public PHHueSDK getHueSDK() {
+		return PHHueSDK.getInstance();
+	}
 
 	private PHSDKListener listener = new PHSDKListener() {
 
