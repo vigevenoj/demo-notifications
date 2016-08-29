@@ -19,7 +19,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,10 +85,10 @@ public class OwntracksMqttClient implements CommandLineRunner, MqttCallback {
 			
 			if (client.isConnected()) {
 				logger.error("Connected to MQTT broker for Owntracks location updates");
-				MqttTopic topic = client.getTopic(config.getTopic());
+//				MqttTopic topic = client.getTopic(config.getTopic());
 				
 				int subQoS = 0;
-				client.subscribe(topic.getName(), subQoS);
+				client.subscribe(config.getTopic(), subQoS);
 			} else {
 				logger.error("NOT CONNECTED to mqtt broker");
 			}
@@ -126,10 +125,12 @@ public class OwntracksMqttClient implements CommandLineRunner, MqttCallback {
 		String payload = new String(message.getPayload());
 		logger.info("New message from owntracks mqtt broker:");
 		logger.info(payload);
+		logger.info("topic: " + topic);
 		
 		try {
 			LocationUpdate update = mapper.readValue(payload, LocationUpdate.class);
 			logger.info(update.toString());
+			update.setName(topic);
 			
 			dao.insert(update);
 		} catch (Exception e) {
