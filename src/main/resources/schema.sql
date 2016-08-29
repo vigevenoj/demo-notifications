@@ -26,7 +26,8 @@ create table locationupdates (
   acc varchar(8), 
   tst bigint, 
   batt varchar(8), 
-  event varchar(32) 
+  event varchar(32), 
+  name varchar(32)
 );
 
 create table monitoredlocations (

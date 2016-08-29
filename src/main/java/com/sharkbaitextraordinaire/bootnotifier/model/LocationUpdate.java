@@ -18,6 +18,7 @@ public class LocationUpdate implements MonitorableLocation {
 	@JsonProperty("tst")
 	Long timestamp;
 	String event;
+	String name; // Name is set outside of the constructor. See OwntracksMqttClient for an example
 
 	public LocationUpdate() {
 	}
@@ -99,17 +100,22 @@ public class LocationUpdate implements MonitorableLocation {
 
 	@Override
 	public String toString() {
-		return "LocationUpdate [_type=" + _type + ", latitude=" + latitude + ", longitude=" + longitude + ", accuracy="
+		return "LocationUpdate [name=" + name + " _type=" + _type + ", latitude=" + latitude + ", longitude=" + longitude + ", accuracy="
 				+ accuracy + ", battery=" + battery + ", timestamp=" + timestamp + ", event=" + event + "]";
 	}
 
 	@Override
 	public String getName() {
-		return "your latest location";
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
 	public Point getLocation() {
 		return new Point(longitude, latitude);
 	}
+	
 }

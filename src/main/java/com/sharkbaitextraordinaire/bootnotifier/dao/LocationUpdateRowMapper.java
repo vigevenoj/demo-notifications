@@ -19,6 +19,7 @@ public class LocationUpdateRowMapper implements RowMapper<LocationUpdate> {
 		location.setBattery(rs.getString("batt"));
 		location.setTimestamp(rs.getLong("tst"));
 		location.setEvent(rs.getString("event"));
+		location.setName(rs.getString("name"));
 		return location;
 	}
 

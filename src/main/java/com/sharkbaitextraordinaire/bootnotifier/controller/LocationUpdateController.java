@@ -37,4 +37,14 @@ public class LocationUpdateController {
 		}
 		return dao.findLatest();
 	}
+	
+	@RequestMapping(value="/{name}", method=RequestMethod.GET)
+	public List<LocationUpdate> findAllByName(String name) {
+		return dao.findAllForUser(name);
+	}
+	
+	@RequestMapping(value="/latest/{name}", method=RequestMethod.GET)
+	public LocationUpdate findLatestForUser(String name) {
+		return dao.latestForUser(name);
+	}
 }
