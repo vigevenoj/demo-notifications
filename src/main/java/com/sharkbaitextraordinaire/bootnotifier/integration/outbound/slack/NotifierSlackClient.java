@@ -60,6 +60,7 @@ public class NotifierSlackClient implements CommandLineRunner{
 				}
 			});
 			rtmClient.addListener(Event.MESSAGE, new LightingMessageEventListener(slackClient, hueIntegration.getHueSDK()));
+			rtmClient.addListener(Event.MESSAGE, new ForecastMessageEventListener());
 			rtmClient.connect();
 		}
 	}

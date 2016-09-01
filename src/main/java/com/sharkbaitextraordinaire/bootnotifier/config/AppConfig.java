@@ -78,4 +78,12 @@ public class AppConfig {
 	@Bean EarthquakeAnalysisConfig earthquakeAnalysisConfig() {
 		return new EarthquakeAnalysisConfig();
 	}
+	
+	/** 
+	 * Configuration for forecast.io API 
+	 */
+	@Bean
+	public ForecastConfig forecastConfig() {
+		return new ForecastConfig();
+	}
 }
