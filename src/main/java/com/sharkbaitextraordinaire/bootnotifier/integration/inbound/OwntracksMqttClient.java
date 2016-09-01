@@ -49,6 +49,10 @@ public class OwntracksMqttClient implements CommandLineRunner, MqttCallback {
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 	}
 	
+	public MqttClient getClient() {
+		return client;
+	}
+	
 	@Override
 	public void run(String... arg0) throws Exception {
 		String clientID = config.getClientID();
