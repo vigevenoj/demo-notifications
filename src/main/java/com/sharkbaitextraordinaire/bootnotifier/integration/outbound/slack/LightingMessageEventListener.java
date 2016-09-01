@@ -57,7 +57,6 @@ public class LightingMessageEventListener implements EventListener{
 			for (PHLight light : lights) {
 				sb.append(light.getIdentifier()).append(" " ).append(light.getName());
 				sb.append("\n");
-				logger.info(sb.toString());
 			}
 			ChatPostMessageMethod postMessage = new ChatPostMessageMethod(messageChannel, sb.toString());
 			postMessage.setUnfurl_links(true);
@@ -65,6 +64,7 @@ public class LightingMessageEventListener implements EventListener{
 			postMessage.setAs_user(true);
 			
 			String ts = slackClient.postMessage(postMessage);
+			logger.info(ts);
 		} else if (messageText.startsWith("lights on")) {
 			logger.debug("turning the lights on for " + user);
 			PHLightState lightstate = new PHLightState();
