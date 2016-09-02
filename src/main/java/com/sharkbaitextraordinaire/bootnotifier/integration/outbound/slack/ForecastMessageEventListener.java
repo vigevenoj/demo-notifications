@@ -42,6 +42,10 @@ public class ForecastMessageEventListener implements EventListener {
 	
 	private void handleForecastRequest(JsonNode json) {
 		LocationUpdate latest = locationUpdateDAO.findLatest();
+    if (latest == null) {
+      logger.error("No latest update for any user, aborting request");
+      return;
+    }
 		
 		ForecastIO fio = new ForecastIO(forecastConfig.getApiKey());
 		fio.setExcludeURL("minutely");
