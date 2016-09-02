@@ -2,7 +2,7 @@ package com.sharkbaitextraordinaire.bootnotifier.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix="hue")
+@ConfigurationProperties(prefix="forecast")
 public class ForecastConfig {
 	private String apiKey;
 
