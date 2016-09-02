@@ -10,7 +10,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.sharkbaitextraordinaire.bootnotifier.config.ForecastConfig;
 import com.sharkbaitextraordinaire.bootnotifier.config.SlackConfig;
+import com.sharkbaitextraordinaire.bootnotifier.dao.LocationUpdateDAO;
 import com.sharkbaitextraordinaire.bootnotifier.integration.HueIntegration;
 
 import allbegray.slack.SlackClientFactory;
@@ -32,6 +34,10 @@ public class NotifierSlackClient implements CommandLineRunner{
 	private SlackRtmClientRunnable slackRtmClient;
 	@Autowired
 	private HueIntegration hueIntegration;
+	@Autowired
+	private LocationUpdateDAO locationUpdateDAO;
+	@Autowired 
+	ForecastConfig forecastConfig;
 	
 	public NotifierSlackClient() {
 	}
@@ -60,7 +66,7 @@ public class NotifierSlackClient implements CommandLineRunner{
 				}
 			});
 			rtmClient.addListener(Event.MESSAGE, new LightingMessageEventListener(slackClient, hueIntegration.getHueSDK()));
-			rtmClient.addListener(Event.MESSAGE, new ForecastMessageEventListener());
+			rtmClient.addListener(Event.MESSAGE, new ForecastMessageEventListener(slackClient, locationUpdateDAO, forecastConfig));
 			rtmClient.connect();
 		}
 	}
