@@ -1,5 +1,6 @@
 package com.sharkbaitextraordinaire.bootnotifier.integration.outbound.slack;
 
+import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,7 @@ import allbegray.slack.rtm.Event;
 import allbegray.slack.rtm.EventListener;
 import allbegray.slack.rtm.SlackRealTimeMessagingClient;
 import allbegray.slack.type.Channel;
+import allbegray.slack.type.User;
 import allbegray.slack.webapi.SlackWebApiClient;
 
 @Component
@@ -34,6 +36,8 @@ public class NotifierSlackClient implements CommandLineRunner{
 	ForecastConfig forecastConfig;
 	@Autowired LightingMessageEventListener lightingMessageEventListener;
 	@Autowired ForecastMessageEventListener forecastMessageEventListener;
+	@Autowired WoodhouseEventListener woodhouseEventListener;
+	@Autowired List<User> userList;
 	
 	public NotifierSlackClient() {
 	}
@@ -63,6 +67,7 @@ public class NotifierSlackClient implements CommandLineRunner{
 			});
 			rtmClient.addListener(Event.MESSAGE, lightingMessageEventListener);
 			rtmClient.addListener(Event.MESSAGE, forecastMessageEventListener);
+			rtmClient.addListener(Event.MESSAGE, woodhouseEventListener);
 			rtmClient.connect();
 		}
 	}
@@ -72,6 +77,7 @@ public class NotifierSlackClient implements CommandLineRunner{
 		String channelName = slackConfig.getChannelName();
 		slackClient = SlackClientFactory.createWebApiClient(token);
 		slackClient.auth();
+		userList = slackClient.getUserList();
 		
 		logger.debug("looking for slack channel named " + channelName);
 		slackChannel = slackClient.getChannelList().stream()
@@ -81,6 +87,7 @@ public class NotifierSlackClient implements CommandLineRunner{
 		
 		lightingMessageEventListener.setSlackClient(slackClient);
 		forecastMessageEventListener.setSlackClient(slackClient);
+		woodhouseEventListener.setSlackClient(slackClient);
 	}
 	
 	private static <T> Collector<T, ?, T> singletonCollector() {
