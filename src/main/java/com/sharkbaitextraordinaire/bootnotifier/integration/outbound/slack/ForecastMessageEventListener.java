@@ -2,6 +2,8 @@ package com.sharkbaitextraordinaire.bootnotifier.integration.outbound.slack;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.dvdme.ForecastIOLib.FIOCurrently;
@@ -14,17 +16,23 @@ import allbegray.slack.rtm.EventListener;
 import allbegray.slack.webapi.SlackWebApiClient;
 import allbegray.slack.webapi.method.chats.ChatPostMessageMethod;
 
+@Component
 public class ForecastMessageEventListener implements EventListener {
 	
+	@Autowired
 	private LocationUpdateDAO dao;
+	@Autowired
 	private ForecastConfig forecastConfig;
 	private SlackWebApiClient slackClient;
 	private final Logger logger = LoggerFactory.getLogger(ForecastMessageEventListener.class);
 	
-	public ForecastMessageEventListener(SlackWebApiClient slackClient, LocationUpdateDAO dao, ForecastConfig config) {
-		this.slackClient = slackClient;
+	public ForecastMessageEventListener(LocationUpdateDAO dao, ForecastConfig config) {
 		this.dao = dao;
 		this.forecastConfig = config;
+	}
+	
+	public void setSlackClient(SlackWebApiClient slackClient) {
+		this.slackClient = slackClient;
 	}
 	
 	@Override

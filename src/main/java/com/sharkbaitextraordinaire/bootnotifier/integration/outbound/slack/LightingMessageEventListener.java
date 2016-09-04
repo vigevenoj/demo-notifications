@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.philips.lighting.hue.sdk.PHHueSDK;
@@ -16,15 +17,19 @@ import allbegray.slack.rtm.EventListener;
 import allbegray.slack.webapi.SlackWebApiClient;
 import allbegray.slack.webapi.method.chats.ChatPostMessageMethod;
 
+@Component
 public class LightingMessageEventListener implements EventListener{
 	
 	private final Logger logger = LoggerFactory.getLogger(LightingMessageEventListener.class);
 	private SlackWebApiClient slackClient;
 	private PHHueSDK huesdk;
 	
-	public LightingMessageEventListener(SlackWebApiClient slackClient, PHHueSDK huesdk) {
+	public LightingMessageEventListener() {
+		this.huesdk = PHHueSDK.getInstance();
+	}
+	
+	public void setSlackClient(SlackWebApiClient slackClient) {
 		this.slackClient = slackClient;
-		this.huesdk = huesdk;
 	}
 
 	@Override
@@ -120,14 +125,14 @@ public class LightingMessageEventListener implements EventListener{
 		PHHueSDK.getInstance().getSelectedBridge().updateLightState(light, lightState);
 	}
 	
-	private String getLightIdFromName(String name) {
-		List<PHLight> lights = huesdk.getInstance().getSelectedBridge().getResourceCache().getAllLights();
-		for (PHLight light : lights) {
-			if (light.getName().equals(name)) {
-				return light.getIdentifier();
-			}
-		}
-		return null;
-	}
+//	private String getLightIdFromName(String name) {
+//		List<PHLight> lights = huesdk.getInstance().getSelectedBridge().getResourceCache().getAllLights();
+//		for (PHLight light : lights) {
+//			if (light.getName().equals(name)) {
+//				return light.getIdentifier();
+//			}
+//		}
+//		return null;
+//	}
 
 }

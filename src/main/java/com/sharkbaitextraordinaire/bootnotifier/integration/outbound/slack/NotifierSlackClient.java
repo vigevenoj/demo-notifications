@@ -12,8 +12,6 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sharkbaitextraordinaire.bootnotifier.config.ForecastConfig;
 import com.sharkbaitextraordinaire.bootnotifier.config.SlackConfig;
-import com.sharkbaitextraordinaire.bootnotifier.dao.LocationUpdateDAO;
-import com.sharkbaitextraordinaire.bootnotifier.integration.HueIntegration;
 
 import allbegray.slack.SlackClientFactory;
 import allbegray.slack.rtm.Event;
@@ -32,12 +30,10 @@ public class NotifierSlackClient implements CommandLineRunner{
 	private Channel slackChannel;
 	private SlackWebApiClient slackClient;
 	private SlackRtmClientRunnable slackRtmClient;
-	@Autowired
-	private HueIntegration hueIntegration;
-	@Autowired
-	private LocationUpdateDAO locationUpdateDAO;
 	@Autowired 
 	ForecastConfig forecastConfig;
+	@Autowired LightingMessageEventListener lightingMessageEventListener;
+	@Autowired ForecastMessageEventListener forecastMessageEventListener;
 	
 	public NotifierSlackClient() {
 	}
@@ -65,8 +61,8 @@ public class NotifierSlackClient implements CommandLineRunner{
 					logger.warn("Handling hello message " + message.asText());
 				}
 			});
-			rtmClient.addListener(Event.MESSAGE, new LightingMessageEventListener(slackClient, hueIntegration.getHueSDK()));
-			rtmClient.addListener(Event.MESSAGE, new ForecastMessageEventListener(slackClient, locationUpdateDAO, forecastConfig));
+			rtmClient.addListener(Event.MESSAGE, lightingMessageEventListener);
+			rtmClient.addListener(Event.MESSAGE, forecastMessageEventListener);
 			rtmClient.connect();
 		}
 	}
@@ -82,6 +78,9 @@ public class NotifierSlackClient implements CommandLineRunner{
 				.filter(c -> c.getName().equals(channelName))
 				.collect(singletonCollector());
 		logger.warn("Using channel " + slackChannel.getName() + " with ID " + slackChannel.getId());
+		
+		lightingMessageEventListener.setSlackClient(slackClient);
+		forecastMessageEventListener.setSlackClient(slackClient);
 	}
 	
 	private static <T> Collector<T, ?, T> singletonCollector() {

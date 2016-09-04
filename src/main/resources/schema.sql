@@ -1,6 +1,6 @@
 create table earthquakes (
   magnitude float(2), 
-  place varchar(64),  
+  place varchar(128),  
   earthquaketime bigint, 
   updatetime bigint, 
   tz int, 
@@ -34,4 +34,10 @@ create table monitoredlocations (
   latitude decimal(9,6), 
   longitude decimal(9,6), 
   name varchar(32) 
+);
+
+create table slacktolocationmapping (
+  slackusername varchar(64),
+  locationname varchar(64),
+  constraint unique_pair primary key(slackusername, locationname)
 );
