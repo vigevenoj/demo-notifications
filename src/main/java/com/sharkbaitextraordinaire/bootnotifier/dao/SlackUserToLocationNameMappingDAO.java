@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -57,6 +58,9 @@ public class SlackUserToLocationNameMappingDAO {
 					String.class);
 		} catch (EmptyResultDataAccessException e) {
 			return null;
+		} catch (IncorrectResultSizeDataAccessException e) {
+			logger.error("User has two mappings?", e);
+			return null;
 		}
 	}
 	
@@ -78,6 +82,6 @@ public class SlackUserToLocationNameMappingDAO {
 		} catch (DataAccessException e) {
 			logger.info(e.getMessage(), e);
 			return Collections.emptyMap();
-		}
+		} 
 	}
 }
