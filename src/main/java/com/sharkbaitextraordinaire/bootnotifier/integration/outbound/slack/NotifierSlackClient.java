@@ -37,7 +37,7 @@ public class NotifierSlackClient implements CommandLineRunner{
 	@Autowired LightingMessageEventListener lightingMessageEventListener;
 	@Autowired ForecastMessageEventListener forecastMessageEventListener;
 	@Autowired WoodhouseEventListener woodhouseEventListener;
-	@Autowired List<User> userList;
+	private List<User> userList;
 	
 	public NotifierSlackClient() {
 	}

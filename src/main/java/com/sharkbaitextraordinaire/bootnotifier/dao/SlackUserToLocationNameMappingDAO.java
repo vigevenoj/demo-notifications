@@ -18,12 +18,12 @@ import org.springframework.stereotype.Component;
 import com.sharkbaitextraordinaire.bootnotifier.model.SlackUsernameLocationNamePair;
 
 @Component
-public class SlackUserToLocationNameMapping {
+public class SlackUserToLocationNameMappingDAO {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 	
-	private final Logger logger = LoggerFactory.getLogger(SlackUserToLocationNameMapping.class);
+	private final Logger logger = LoggerFactory.getLogger(SlackUserToLocationNameMappingDAO.class);
 	
 	private static final String SELECT_BY_SLACK_USERNAME = "select locationname from slacktolocationmapping where slackusername = ?";
 	private static final String SELECT_ALL_MAPPINGS = "select slackusername, locationname from slacktolocationmapping";
@@ -32,8 +32,8 @@ public class SlackUserToLocationNameMapping {
 	
 	/**
 	 * Add or update a Slack user name to location name mapping
-	 * @param slackUsername
-	 * @param locationName
+	 * @param slackUsername Slack user name
+	 * @param locationName The name of the location data associated with this Slack user name
 	 */
 	public void addMapping(String slackUsername, String locationName) {
 		try {
@@ -47,8 +47,8 @@ public class SlackUserToLocationNameMapping {
 	
 	/**
 	 * Get the location name associated with a given Slack user name
-	 * @param slackUsername
-	 * @return
+	 * @param slackUsername A Slack user name
+	 * @return the name of the location data associated with this Slack user name
 	 */
 	public String getLocationNameForSlackUsername(String slackUsername) {
 		try {
@@ -62,7 +62,9 @@ public class SlackUserToLocationNameMapping {
 	
 	/**
 	 * Get all currently-configured mappings between Slack user names and location names
-	 * @return
+	 * The map returned is Slack user names, not the internal ID, so you'll need to look 
+	 * up the user ID in order to really use this information
+	 * @return A map of Slack username keys to location name values 
 	 */
 	public Map<String,String> getAllMappings() {
 		try {

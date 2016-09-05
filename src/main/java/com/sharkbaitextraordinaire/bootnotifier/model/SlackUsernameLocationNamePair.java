@@ -1,8 +1,14 @@
 package com.sharkbaitextraordinaire.bootnotifier.model;
 
+/**
+ * slackUsername is the end-user-visible username in slack, not the internal ID 
+ * locationName is the name of the location in the locationUpdates table
+ */
 public class SlackUsernameLocationNamePair {
 	private String slackUsername;
 	private String locationName;
+	
+	public SlackUsernameLocationNamePair() { }
 	
 	public SlackUsernameLocationNamePair(String slackUsername, String locationName) {
 		this.slackUsername = slackUsername;
