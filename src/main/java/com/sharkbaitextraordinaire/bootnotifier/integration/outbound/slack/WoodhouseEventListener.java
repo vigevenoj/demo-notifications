@@ -73,10 +73,58 @@ public class WoodhouseEventListener implements EventListener {
 	}
 	
 	void handleWoodhouseMention(JsonNode json) {
+		String messageText = json.get("text").textValue();
 		// @woodhouse use location "" for @slackuser
+		// @woodhosue set location mapping for @slackuser to foo
+		if (messageText.startsWith("<@"+woodhouseUser.getId()+"> set location mapping for ")) {
+			logger.error("setting location mapping for user");
+			// parse target userID
+			String[] message = messageText.split("set location mapping for "); // TODO bounds check this array
+			for (String s : message) {
+				logger.error(s); // message[1] should contain a <@slackid> of the target user
+			}
+			String userid = message[1].substring(2, message[1].length()-1);
+			String[] locationarray = messageText.split("@<[A-Z1-9]> to "); // TODO bounds check this array
+			// example locationarray: "<@U1LEHFD1N> set location mapping for <@U1LAMGD4N> to /owntracks/jacob/nexus5" // TODO this isn't right
+			for (String s : locationarray) {
+				logger.error("location array: " + s);
+			}
+			// look up user's name
+			// TODO confirm that userList contains a user where user.getName() returns the name we want
+			for (User u : userList) {
+				if (u.getId().equals(userid)) {
+					slackUserToLocationMapping.addMapping(u.getName(), locationarray[1]);
+				}
+			}
+		}
 		// @woodhouse get locationname for @slackuser
+		else if (messageText.startsWith("<@"+woodhouseUser.getId()+"> get location mapping for ")) {
+			logger.info("getting location mapping for user");
+			// parse target userID
+			String[] message = messageText.split(" get location mapping for "); // TODO bounds checking this array
+			for (String s : message) { 
+				logger.error(s); // message[1] should contain a <@slackid> of the target user
+			}
+			String userid = message[1].substring(2, message[1].length()-1);
+			// TODO confirm that userList contains a user where user.getName() returns the name we want
+			for (User u : userList) {
+				if (u.getId().equals(userid)) {
+					logger.warn("looking up location mapping for user " + u.getId());
+					StringBuilder sb = new StringBuilder();
+					sb.append("<@"+u.getId()+"> is mapped to locationname ");
+					String locationname = slackUserToLocationMapping.getLocationNameForSlackUsername(u.getName());
+					sb.append(locationname);
+					ChatPostMessageMethod postMessage = new ChatPostMessageMethod(json.get("channel").textValue(), sb.toString());
+					postMessage.setUnfurl_links(true);
+					postMessage.setUsername("woodhouse");
+					postMessage.setAs_user(true);
+					slackClient.postMessage(postMessage);
+					return;
+				}
+			}
+		}
 		// @woodhouse get location mappings
-		if (json.get("text").textValue().equalsIgnoreCase("<@"+ woodhouseUser.getId() +"> get location mappings")) {
+		else if (messageText.equalsIgnoreCase("<@"+ woodhouseUser.getId() +"> get location mappings")) {
 			Map<String,String> mappings = slackUserToLocationMapping.getAllMappings();
 			StringBuilder sb = new StringBuilder();
 			for (String key : mappings.keySet()) {
