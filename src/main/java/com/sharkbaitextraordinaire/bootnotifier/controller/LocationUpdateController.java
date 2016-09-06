@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,12 +40,12 @@ public class LocationUpdateController {
 	}
 	
 	@RequestMapping(value="/{name}", method=RequestMethod.GET)
-	public List<LocationUpdate> findAllByName(String name) {
+	public List<LocationUpdate> findAllByName(@PathVariable String name) {
 		return dao.findAllForUser(name);
 	}
 	
 	@RequestMapping(value="/latest/{name}", method=RequestMethod.GET)
-	public LocationUpdate findLatestForUser(String name) {
+	public LocationUpdate findLatestForUser(@PathVariable String name) {
 		return dao.latestForUser(name);
 	}
 }
