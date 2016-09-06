@@ -133,7 +133,11 @@ public class OwntracksMqttClient implements CommandLineRunner, MqttCallback {
 		
 		try {
 			LocationUpdate update = mapper.readValue(payload, LocationUpdate.class);
-			update.setName(topic);
+			
+			// We don't need to check this split, because
+			// the format is "owntracks/user/device" and 
+			// we want the "user" portion
+			update.setName(topic.split("/")[1]); 
 			logger.info(update.toString());
 			
 			dao.insert(update);
