@@ -1,5 +1,10 @@
 package com.sharkbaitextraordinaire.bootnotifier.integration.outbound.slack;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -158,10 +163,14 @@ public class WoodhouseEventListener implements EventListener {
 							try {
 								logger.warn("looking up latest location update for '" + locationname + "'");
 								LocationUpdate latest = locationUpdateDAO.latestForUser(locationname);
+								
+								ZonedDateTime date =
+									    ZonedDateTime.ofInstant(Instant.ofEpochSecond(latest.getTimestamp()), ZoneId.systemDefault());
 								StringBuilder reply = new StringBuilder();
-								reply.append("<@").append(u.getId()).append("> was at ")
-								.append(latest.getLocation().toString()).append(" at ")
-								.append(latest.getTimestamp());
+								reply.append("<@").append(u.getId()).append("> was at longitude ")
+								.append(latest.getLongitude()).append(" and latitude ").append(latest.getLatitude())
+								.append(" at ")
+								.append(date.format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
 	
 								replyToRequest(json.get("channel").textValue(), reply.toString());
 								return;
