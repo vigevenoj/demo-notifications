@@ -133,8 +133,8 @@ public class OwntracksMqttClient implements CommandLineRunner, MqttCallback {
 		
 		try {
 			LocationUpdate update = mapper.readValue(payload, LocationUpdate.class);
-			logger.info(update.toString());
 			update.setName(topic);
+			logger.info(update.toString());
 			
 			dao.insert(update);
 		} catch (Exception e) {
