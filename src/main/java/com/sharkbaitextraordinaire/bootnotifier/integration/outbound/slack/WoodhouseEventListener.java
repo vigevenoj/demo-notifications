@@ -105,6 +105,7 @@ public class WoodhouseEventListener implements EventListener {
 				}
 			} else {
 				logger.warn("looked up a user who doesn't exist");
+				replyToRequest(json.get("channel").textValue(), "That user doesn't exist");
 			}
 			return;
 		} else if (messageText.startsWith("<@"+woodhouseUser.getId()+"> get location mapping for ")) {
