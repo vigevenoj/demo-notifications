@@ -9,8 +9,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sharkbaitextraordinaire.bootnotifier.config.BridgeClientConfig;
-import com.sharkbaitextraordinaire.bootnotifier.model.multcobridges.BridgeUpdate;
-import com.sharkbaitextraordinaire.bootnotifier.model.multcobridges.SingleBridgeUpdate;
+import com.sharkbaitextraordinaire.multcobridges.BridgeUpdate;
+import com.sharkbaitextraordinaire.multcobridges.SingleBridgeUpdate;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
