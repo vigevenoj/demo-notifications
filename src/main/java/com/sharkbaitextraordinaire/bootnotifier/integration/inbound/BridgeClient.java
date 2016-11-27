@@ -58,7 +58,7 @@ public class BridgeClient {
 		});
 		executorService.shutdown();
 	}
-	
+
 	private void doTask() {
 		logger.info("Bridge lift status client starting up...");
 		logger.info("Using " + config.getApiUrl() + " as target");
@@ -83,7 +83,7 @@ public class BridgeClient {
 			}
 		}
 	}
-	
+
 	private void parseBridgeUpdate(InboundEvent inboundEvent) {
 		ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		if (inboundEvent.getName() == null || inboundEvent.getName().equals("null")) {
@@ -132,23 +132,23 @@ public class BridgeClient {
 			logger.debug(inboundEvent.toString());
 		}
 	}
-	
-	 @PreDestroy
-	 public void beandestroy() {
-	  this.stopThread = true;
-	 
-	  if(executorService != null){
-	   try {
-	    // wait 1 second for closing all threads
-	    executorService.awaitTermination(1, TimeUnit.SECONDS);
-	   } catch (InterruptedException e) {
-	    Thread.currentThread().interrupt();
-	   }
-	  }
-	 }
-	 
-	 public boolean isConnected() {
-		 return isOpen.get();
-	 }
-	 
+
+	@PreDestroy
+	public void beandestroy() {
+		this.stopThread = true;
+
+		if(executorService != null){
+			try {
+				// wait 1 second for closing all threads
+				executorService.awaitTermination(1, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
+	}
+
+	public boolean isConnected() {
+		return isOpen.get();
+	}
+
 }
