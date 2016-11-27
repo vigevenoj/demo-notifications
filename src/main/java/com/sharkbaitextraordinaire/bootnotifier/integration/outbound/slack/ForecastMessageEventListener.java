@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.dvdme.ForecastIOLib.FIOCurrently;
+import com.github.dvdme.ForecastIOLib.FIODaily;
 import com.github.dvdme.ForecastIOLib.ForecastIO;
 import com.sharkbaitextraordinaire.bootnotifier.config.ForecastConfig;
 import com.sharkbaitextraordinaire.bootnotifier.dao.LocationUpdateDAO;
@@ -60,8 +61,9 @@ public class ForecastMessageEventListener implements EventListener {
 		
 		String messageChannel = json.get("channel").textValue();
 		
-		
-		// TODO better null check here- 0 is a valid lat/lng but not 0,0.
+//		if (!isLatestLocationAvailable(latest)) {
+//			notifyNoLocationsAvailable(messageChannel);
+//		}
 		if (latest == null || (latest.getLatitude() == 0 && latest.getLongitude() == 0)) {
 			logger.error("No latest update for any user, aborting request");
 			String no_user_locations = "Can't give a forecast because nobody has a location";
@@ -91,5 +93,61 @@ public class ForecastMessageEventListener implements EventListener {
 		postMessage.setAs_user(true);
 		slackClient.postMessage(postMessage);
 	}
+	
+	private void handleSunriseRequest(JsonNode json) {
+		LocationUpdate latest = dao.findLatest();
+		
+		String messageChannel = json.get("channel").textValue();
+		
+//		if (!isLatestLocationAvailable(latest)) {
+//			notifyNoLocationsAvailable(messageChannel);
+//		}
+		if (latest == null || (latest.getLatitude() == 0 && latest.getLongitude() == 0)) {
+			logger.error("No latest update for any user, aborting request");
+			String no_user_locations = "Can't give a forecast because nobody has a location";
+			ChatPostMessageMethod postMessage = new ChatPostMessageMethod(messageChannel, no_user_locations);
+			postMessage.setUnfurl_links(true);
+			postMessage.setUsername("woodhouse");
+			postMessage.setAs_user(true);
+			slackClient.postMessage(postMessage);
+			return;
+		}
+		
+		ForecastIO fio = new ForecastIO(forecastConfig.getApiKey());
+		fio.setExcludeURL("minutely");
+		fio.getForecast(String.valueOf(latest.getLatitude()), String.valueOf(latest.getLongitude()));
+		FIODaily daily = new FIODaily(fio);
+		String sunrisetime = daily.getDay(0).sunriseTime();
+		
+		logger.warn("Sunrise at " + sunrisetime);
+		
+		ChatPostMessageMethod postMessage = new ChatPostMessageMethod(messageChannel, "Sunrise at " + sunrisetime);
+		postMessage.setUsername("woodhouse");
+		postMessage.setAs_user(true);
+		slackClient.postMessage(postMessage);
+	}
+	
+	/**
+	 * Check if there is a location update available 
+	 * @param update The possible location update
+	 * @return
+	 */
+	private boolean isLatestLocationAvailable(LocationUpdate update) {
+		// TODO better null check here- 0 is a valid lat/lng but not 0,0.
+		if (update == null || (update.getLatitude() == 0 && update.getLongitude() == 0)) {
+			return false;
+		} else 
+			return true;
+	}
 
+	private void notifyNoLocationsAvailable(String messageChannel) {
+		logger.error("No latest update for any user, aborting request");
+		String no_user_locations = "Can't give a forecast because nobody has a location";
+		ChatPostMessageMethod postMessage = new ChatPostMessageMethod(messageChannel, no_user_locations);
+		postMessage.setUnfurl_links(true);
+		postMessage.setUsername("woodhouse");
+		postMessage.setAs_user(true);
+		slackClient.postMessage(postMessage);
+		return;
+	}
 }
