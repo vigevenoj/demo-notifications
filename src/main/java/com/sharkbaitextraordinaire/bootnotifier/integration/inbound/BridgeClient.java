@@ -146,4 +146,9 @@ public class BridgeClient {
 	   }
 	  }
 	 }
+	 
+	 public boolean isConnected() {
+		 return isOpen.get();
+	 }
+	 
 }
