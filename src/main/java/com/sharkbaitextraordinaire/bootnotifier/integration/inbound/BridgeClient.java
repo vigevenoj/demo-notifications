@@ -2,6 +2,7 @@ package com.sharkbaitextraordinaire.bootnotifier.integration.inbound;
 
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -41,8 +42,11 @@ public class BridgeClient {
 
 	private ExecutorService executorService;
 	private volatile boolean stopThread = false;
+	private final CounterService counterService;
 
-	public BridgeClient() {
+	@Autowired
+	public BridgeClient(CounterService counterService) {
+		this.counterService = counterService;
 	}
 
 	@PostConstruct
@@ -89,6 +93,7 @@ public class BridgeClient {
 		if (inboundEvent.getName() == null || inboundEvent.getName().equals("null")) {
 			// this is a keep-alive message, and should be seen every 20 seconds
 			logger.debug("Bridge event (name is null): '" + inboundEvent.getName() + "'");
+			counterService.increment("counter.bridges.keepalive.seen");
 		} else if (inboundEvent.getName().equals("bridge data")) {
 			// Bridge Data:
 			// A json object consisting of possible updates to bridge statuses
@@ -101,6 +106,7 @@ public class BridgeClient {
 				String event = "";
 
 				if (bu.getChanged().equals("status")) {
+					counterService.increment("counter.bridges.updeates.total");
 					if (changedBridge != null && !("".equals(changedBridge))) {
 						logger.warn("Getting bridge update for " + changedBridge);
 						SingleBridgeUpdate sbu = bu.getBridgeUpdates().get(changedBridge);
@@ -130,6 +136,7 @@ public class BridgeClient {
 			// This events name is "null;" and is the keepalive?
 			logger.info("bridge event (in else): '" + inboundEvent.getName() + "'");
 			logger.debug(inboundEvent.toString());
+			counterService.increment("counter.bridges.keepalive.seen");
 		}
 	}
 

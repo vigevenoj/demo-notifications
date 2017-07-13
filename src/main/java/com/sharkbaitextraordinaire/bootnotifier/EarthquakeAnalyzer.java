@@ -16,6 +16,7 @@ import javax.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 import com.sharkbaitextraordinaire.bootnotifier.config.AppConfig;
@@ -56,9 +57,11 @@ public class EarthquakeAnalyzer {
 	private SlackWebApiClient slackClient;
 	private NumberFormat nf = NumberFormat.getIntegerInstance();
 	private volatile boolean stopThread = false;
+	private final CounterService counterService;
 
-
-	public EarthquakeAnalyzer() {
+	@Autowired
+	public EarthquakeAnalyzer(CounterService counterService) {
+		this.counterService = counterService;
 	}
 
 	@PostConstruct
@@ -122,9 +125,11 @@ public class EarthquakeAnalyzer {
 	private void analyzeQuake(Earthquake quake, MonitorableLocation location) {
 		double distance = Haversine.distance(quake.getLocation(), location.getLocation());
 
+		counterService.increment("counter.earthquakes.processed.total");
 		if (distance <= analysisConfig.getWorryDistanceThreshold()) { 
 			// send notification
 			logger.error(quake.getTitle() + " is within WORRY threshold at " + nf.format(distance) + "km");
+			counterService.increment("earthquakes.processed.worrisome.total");
 			// TODO send pushover notification
 			postToSlack("Worrisome " + quake.getTitle() + " is " + nf.format(distance) + "km from " + location.getName()
 			+ ". For more details see<" + quake.getUrl() + ">");
@@ -133,8 +138,10 @@ public class EarthquakeAnalyzer {
 					+ nf.format(distance) + "km. ID " + quake.getId() + ": " + quake.getUrl());
 			postToSlack("Interesting " + quake.getTitle() + " is " + nf.format(distance) + "km from " 
 					+ location.getName() + ". For more details, see <" + quake.getUrl() + ">"); 
+			counterService.increment("counter.earthquakes.processed.interesting.total");
 		} else {
 			// No-op, don't send a notification for quakes that are neither worrisome nor interesting
+			counterService.increment("counter.earthquakes.processed.boring.total");
 		}
 	}
 

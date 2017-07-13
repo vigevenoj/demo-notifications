@@ -15,6 +15,7 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,8 @@ import com.sharkbaitextraordinaire.bootnotifier.model.Earthquake;
 public class EathquakeFetcher {
 	
 	private static final Logger logger = LoggerFactory.getLogger(EathquakeFetcher.class);
+	
+	private final CounterService counterService;
 
 	private Client client;
 	@Autowired
@@ -37,8 +40,10 @@ public class EathquakeFetcher {
 	@Autowired
 	private AppConfig appconfig;
 	
-	public EathquakeFetcher() {
+	@Autowired
+	public EathquakeFetcher(CounterService processedEarthquakes) {
 		client = new JerseyClientBuilder().build();
+		this.counterService = processedEarthquakes;
 	}
 
 	@Scheduled(fixedRate = 5 * 60 * 1000) // every five minutes
@@ -47,7 +52,7 @@ public class EathquakeFetcher {
 		logger.info("Fetching an earthquake feed");
 		ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		
-		WebTarget target = client.target("http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson");
+		WebTarget target = client.target("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_hour.geojson");
 		Invocation.Builder invocationBuilder = target.request();
 		Response response = invocationBuilder.get();
 		
@@ -55,6 +60,7 @@ public class EathquakeFetcher {
 		if (status == 200) {
 			
 			logger.debug("USGS feed fetched with 200 response");
+			counterService.increment("counter.earthquakes.fetches.ok");
 			String feedString = response.readEntity(String.class);
 			try {
 				FeatureCollection fc = mapper.readValue(feedString, FeatureCollection.class);
@@ -68,6 +74,7 @@ public class EathquakeFetcher {
 							} else {
 								// The quake does not exist, so insert it
 								dao.insert(quake);
+								counterService.increment("counter.earthquakes.fetched.total");
 								logger.debug("inserted quake with id '" + quake.getId() + "' into database");
 								appconfig.earthquakeQueue().put(quake);
 								logger.debug("queued a quake (" + appconfig.earthquakeQueue().size() + ")");

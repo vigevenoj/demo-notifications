@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.actuate.metrics.CounterService;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -43,10 +44,12 @@ public class OwntracksMqttClient implements CommandLineRunner, MqttCallback {
 	MqttClient client;
 	MqttConnectOptions connectionOptions;
 	ObjectMapper mapper;
+	private final CounterService counterService;
 	
-	public OwntracksMqttClient() {
+	public OwntracksMqttClient(CounterService counterService) {
 		mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		this.counterService = counterService;
 	}
 	
 	public MqttClient getClient() {
@@ -133,6 +136,7 @@ public class OwntracksMqttClient implements CommandLineRunner, MqttCallback {
 		
 		try {
 			LocationUpdate update = mapper.readValue(payload, LocationUpdate.class);
+			counterService.increment("counter.locationupdates.total");
 			
 			// We don't need to check this split, because
 			// the format is "owntracks/user/device" and 
