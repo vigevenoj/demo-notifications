@@ -7,8 +7,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -21,19 +19,12 @@ import org.springframework.stereotype.Component;
 
 import com.sharkbaitextraordinaire.bootnotifier.config.AppConfig;
 import com.sharkbaitextraordinaire.bootnotifier.config.EarthquakeAnalysisConfig;
-import com.sharkbaitextraordinaire.bootnotifier.config.PushoverConfig;
-import com.sharkbaitextraordinaire.bootnotifier.config.SlackConfig;
 import com.sharkbaitextraordinaire.bootnotifier.dao.LocationUpdateDAO;
 import com.sharkbaitextraordinaire.bootnotifier.dao.MonitoredLocationDAO;
 import com.sharkbaitextraordinaire.bootnotifier.model.Earthquake;
 import com.sharkbaitextraordinaire.bootnotifier.model.LocationUpdate;
 import com.sharkbaitextraordinaire.bootnotifier.model.MonitorableLocation;
-
-import allbegray.slack.SlackClientFactory;
-import allbegray.slack.type.Channel;
-import allbegray.slack.webapi.SlackWebApiClient;
-import allbegray.slack.webapi.method.chats.ChatPostMessageMethod;
-
+import com.sharkbaitextraordinaire.bootnotifier.model.Notification;
 
 @Component
 public class EarthquakeAnalyzer {
@@ -41,10 +32,6 @@ public class EarthquakeAnalyzer {
 	private ExecutorService executorService;
 	private final Logger logger = LoggerFactory.getLogger(EarthquakeAnalyzer.class);
 
-	@Autowired
-	private SlackConfig slackConfig;
-	@Autowired
-	private PushoverConfig pushoverConfig; // TODO implement pushover setup
 	@Autowired 
 	LocationUpdateDAO locationDao;
 	@Autowired
@@ -52,9 +39,8 @@ public class EarthquakeAnalyzer {
 	@Autowired private AppConfig appConfig;
 	@Autowired private EarthquakeAnalysisConfig analysisConfig;
 	private LinkedBlockingQueue<Earthquake> queue;
+	private LinkedBlockingQueue<Notification> outboundNotifications;
 
-	private Channel slackChannel;
-	private SlackWebApiClient slackClient;
 	private NumberFormat nf = NumberFormat.getIntegerInstance();
 	private volatile boolean stopThread = false;
 	private final CounterService counterService;
@@ -68,6 +54,7 @@ public class EarthquakeAnalyzer {
 	public void init() {
 
 		queue = appConfig.earthquakeQueue();
+		outboundNotifications = appConfig.notificationQueue();
 
 		executorService = Executors.newSingleThreadExecutor();
 		executorService.execute(new Runnable() {
@@ -86,13 +73,12 @@ public class EarthquakeAnalyzer {
 				+ " quakes queued for analysis.");
 		if (queue.isEmpty()) {
 			try {
-				logger.warn("Sleeping for five seconds at startup because earthquake queue is empty...");
+				logger.warn("Sleeping for five seconds because earthquake queue is empty...");
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		setUpSlack();
 
 		while (!stopThread) {
 			try {
@@ -130,46 +116,34 @@ public class EarthquakeAnalyzer {
 			// send notification
 			logger.error(quake.getTitle() + " is within WORRY threshold at " + nf.format(distance) + "km");
 			counterService.increment("earthquakes.processed.worrisome.total");
-			// TODO send pushover notification
-			postToSlack("Worrisome " + quake.getTitle() + " is " + nf.format(distance) + "km from " + location.getName()
-			+ ". For more details see<" + quake.getUrl() + ">");
+			Notification notification = new Notification.NotificationBuilder().origin("quakes").title(quake.getTitle())
+					.message("Worrisome " + quake.getTitle() + " is " + nf.format(distance) + " km from " + location.getName() + 
+							". For more details see <" + quake.getUrl() + ">").build();
+			try {
+				outboundNotifications.put(notification);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (distance <= analysisConfig.getInterestDistanceThreshold()) { 
 			logger.error(quake.getTitle() + " is not worrisome but is interesting at " 
 					+ nf.format(distance) + "km. ID " + quake.getId() + ": " + quake.getUrl());
-			postToSlack("Interesting " + quake.getTitle() + " is " + nf.format(distance) + "km from " 
-					+ location.getName() + ". For more details, see <" + quake.getUrl() + ">"); 
 			counterService.increment("counter.earthquakes.processed.interesting.total");
+			Notification notification = new Notification.NotificationBuilder().origin("quakes").title(quake.getTitle())
+			.message("Interesting " + quake.getTitle() + " is " + nf.format(distance) + "km from " 
+					+ location.getName() + ". For more details, see <" + quake.getUrl() + ">").build();
+			try {
+				outboundNotifications.put(notification);
+			} catch (InterruptedException e) {
+				
+			}
+			
 		} else {
 			// No-op, don't send a notification for quakes that are neither worrisome nor interesting
 			counterService.increment("counter.earthquakes.processed.boring.total");
 		}
 	}
 
-
-	private void setUpSlack() {
-		String token = slackConfig.getToken();
-		String channelName = slackConfig.getChannelName();
-		slackClient = SlackClientFactory.createWebApiClient(token);
-		slackClient.auth();
-
-		logger.debug("looking for slack channel named " + channelName);
-
-		slackChannel = slackClient.getChannelList().stream()
-				.filter(c -> c.getName().equals(channelName))
-				.collect(singletonCollector());
-		logger.warn("Using channel " + slackChannel.getName() + " with ID " + slackChannel.getId());
-	}
-	
-	private String postToSlack(String message) {
-		ChatPostMessageMethod postMessage = new ChatPostMessageMethod(slackChannel.getId(), message);
-		postMessage.setUnfurl_links(true);
-		postMessage.setUsername("woodhouse");
-		postMessage.setAs_user(true);
-		
-		String ts = slackClient.postMessage(postMessage);
-		logger.warn("response from slack post message: " + ts);
-		return ts;
-	}
 
 	private MonitorableLocation determineClosestLocationToEarthquake(Earthquake quake, Collection<MonitorableLocation> locations) {
 		MonitorableLocation closest = null;
@@ -197,17 +171,5 @@ public class EarthquakeAnalyzer {
 				Thread.currentThread().interrupt();
 			}
 		}
-	}
-
-	private static <T> Collector<T, ?, T> singletonCollector() {
-		return Collectors.collectingAndThen(
-				Collectors.toList(),
-				list -> {
-					if (list.size() != 1) {
-						throw new IllegalStateException();
-					}
-					return list.get(0);
-				}
-				);
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.sharkbaitextraordinaire.bootnotifier.model.Earthquake;
+import com.sharkbaitextraordinaire.bootnotifier.model.Notification;
 
 @Configuration
 public class AppConfig {
@@ -31,15 +32,12 @@ public class AppConfig {
     public LinkedBlockingQueue<Earthquake> earthquakeQueue() {
         return new LinkedBlockingQueue<Earthquake>();
     }
-
-	/**
-	 * Configuration for Multnomah County bridge lift API
-	 */
-	@Bean
-	public BridgeClientConfig bridgeClientConfig() {
-		return new BridgeClientConfig();
-	}
 	
+	@Bean
+	public LinkedBlockingQueue<Notification> notificationQueue() {
+		return new LinkedBlockingQueue<Notification>();
+	}
+
 	/**
 	 * Configuration for connecting to an MQTT broker for Owntracks updates
 	 */
@@ -49,41 +47,16 @@ public class AppConfig {
 	}
 	
 	/**
-	 * Configuration for sending notifications via Pushover.net 
-	 */
-	@Bean
-	public PushoverConfig pushoverConfig() {
-		return new PushoverConfig();
-	}
-	
-	/**
-	 * Configuration for Slack integration
-	 */
-	@Bean
-	public SlackConfig slackConfig() {
-		return new SlackConfig();
-	}
-	
-	/**
-	 * Configuration for Philips Hue lighting integration
-	 */
-	@Bean
-	public HueConfig hueConfig() {
-		return new HueConfig();
-	}
-	
-	/**
 	 * Configuration for earthquake analysis and notifications
 	 */
 	@Bean EarthquakeAnalysisConfig earthquakeAnalysisConfig() {
 		return new EarthquakeAnalysisConfig();
 	}
 	
-	/** 
-	 * Configuration for forecast.io API 
+	/**
+	 * Configuration for sending notifications
 	 */
-	@Bean
-	public ForecastConfig forecastConfig() {
-		return new ForecastConfig();
+	@Bean NotificationSenderConfig notificationConfig() {
+		return new NotificationSenderConfig();
 	}
 }
