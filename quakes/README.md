@@ -5,22 +5,13 @@ Requirements
 1. Location updates
   * [Owntracks](http://owntracks.org) on your phone
   * An MQTT broker you can access from wherever you run this application
-1. [Pushover](https://pushover.net) notifications
-  * Pushover account
-  * Pushover user token
-  * Define a pushover application for use with this application
-1. Multnomah County bridge status
-  * Request access to the bridge lift API at https://multco.us/it/webform/request-access-bridges-public-api 
-  * Read the [documentation](https://api.multco.us/bridges/docs) about how the bridge lift API works
-1. Slack integration
-  * Team name
-  * API token
-  * Channel name for earthquake updates
-1. Philips Hue integration
-  * Bridge address
-  * Username, which will need to be generated separately
-  * Name of the application (this should go away in a future update)
-  * Name of the device (this should go away in a future update)
+1. A web service that accepts POSTed JSON in the form '{"origin": "", "title": "", "message": "" }'
+1. A certificate authority in order to generate
+  * A CA certificate that both this project and the "destination" accept
+  * A certificate to for the destination service to use
+    * The CA certificate and destination certificate and key need to be packaged into a keystore for this service to trust them
+  * A certificate for this project to use as a client certifiicate for authentication
+    * The CA certificate, client certificate and client key will need to be packaged into a keystore for this service to provide them to the destination service
 
 How to start the application
 ---
@@ -37,15 +28,15 @@ How to start the application
 
 Health Checks
 ---
-Currently unimplemented
+* The connection to the MQTT broker is monitored, and if lost, the health check will fail while the application attempts to reconnect
 
 Behavior while runing
 ---
-
+* Fetching the USGS feed logs a message and increases a counter
+* Each distinct earthquake seen in the feed is logged and increases a counter
+* Each earthquake that is interesting or worrisome will increase a counter and be logged
 
 To Do
 ---
-* Re-implement hue-slack integration from dropwizard project
-* Re-implement pushover notifications from dropwizard project
-* Refactor Multnomah bridge lift integration into separate shared library
+* Healthchecks
 * Prune out-of-date location and earthquake data instead of persisting them forever
