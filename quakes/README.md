@@ -18,6 +18,7 @@ How to start the application
 1. Clone the repository `git clone https://github.com/vigevenoj/springboot-demo-notifications.git`
 1. Run `mvn clean install` to install dependencies
 1. Edit the configuration file or add environment variables to provide the application configuration
+1. From the top-level of the project, `mvn install && mvn spring-boot:run -Dspring.config.location=./quakes/application.properties -pl quakes`
 1. Generate a jar or use the Spring Boot Maven Plugin
   * To generate a jar and use that to run,
     * Run `mvn clean package` to generate a jar
