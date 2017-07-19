@@ -24,7 +24,7 @@ import com.sharkbaitextraordinaire.bootnotifier.dao.MonitoredLocationDAO;
 import com.sharkbaitextraordinaire.bootnotifier.model.Earthquake;
 import com.sharkbaitextraordinaire.bootnotifier.model.LocationUpdate;
 import com.sharkbaitextraordinaire.bootnotifier.model.MonitorableLocation;
-import com.sharkbaitextraordinaire.bootnotifier.model.Notification;
+import com.sharkbaitextraordinaire.notifications.Notification;
 
 @Component
 public class EarthquakeAnalyzer {

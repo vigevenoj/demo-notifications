@@ -29,7 +29,7 @@ import org.springframework.boot.actuate.metrics.CounterService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sharkbaitextraordinaire.bootnotifier.config.AppConfig;
 import com.sharkbaitextraordinaire.bootnotifier.config.NotificationSenderConfig;
-import com.sharkbaitextraordinaire.bootnotifier.model.Notification;
+import com.sharkbaitextraordinaire.notifications.Notification;
 
 
 public class NotificationSender {

@@ -1,4 +1,4 @@
-package com.sharkbaitextraordinaire.bootnotifier.model;
+package com.sharkbaitextraordinaire.notifications;
 
 
 public class Notification {

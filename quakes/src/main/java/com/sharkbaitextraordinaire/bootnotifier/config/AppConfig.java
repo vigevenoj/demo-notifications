@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.sharkbaitextraordinaire.bootnotifier.model.Earthquake;
-import com.sharkbaitextraordinaire.bootnotifier.model.Notification;
+import com.sharkbaitextraordinaire.notifications.Notification;
 
 @Configuration
 public class AppConfig {
