@@ -1,0 +1,24 @@
+server:
+  applicationConnectors:
+    - type: https
+      port: 8443
+
+      keyStorePath: /Users/vigevenoj/code/notifications/certs/server/server.jks
+      keyStorePassword: "notblank"
+      #      certAlias: 
+      enableCRLDP: true
+
+      trustStorePath:  /Users/vigevenoj/code/notifications/certs/server/server.jks
+      trustStorePassword: "notblank"
+
+      validateCerts: false
+      needClientAuth: true
+      validatePeers: true
+
+      supportedProtocols: ["TLSv1.2"]
+      supportedCipherSuites: ["TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384"]
+      allowRenegotiation: false
+logging:
+  level: INFO
+  loggers:
+    com.sharkbaitextraordinaire: DEBUG
