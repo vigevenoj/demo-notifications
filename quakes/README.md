@@ -6,7 +6,7 @@ Requirements
   * [Owntracks](http://owntracks.org) on your phone
   * An MQTT broker you can access from wherever you run this application
 1. A web service that accepts POSTed JSON in the form '{"origin": "", "title": "", "message": "" }'
-1. A certificate authority in order to generate
+1. A certificate authority in order to generate the following certificates
   * A CA certificate that both this project and the "destination" accept
   * A certificate to for the destination service to use
     * The CA certificate and destination certificate and key need to be packaged into a keystore for this service to trust them
@@ -40,4 +40,5 @@ Behavior while runing
 To Do
 ---
 * Healthchecks
+  * Mark the earthquake-fetching component as unhealthy if there are any errors when requesting the USGS feed or while processing the feed itself
 * Prune out-of-date location and earthquake data instead of persisting them forever
