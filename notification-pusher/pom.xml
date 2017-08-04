@@ -10,7 +10,7 @@
     </prerequisites>
 
     <groupId>com.sharkbaitextraordinaire</groupId>
-    <artifactId>notifications</artifactId>
+    <artifactId>personal-notifications-pusher</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 

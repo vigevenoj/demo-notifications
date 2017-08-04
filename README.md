@@ -4,4 +4,4 @@ Currently there is an earthquake analysis service that determines if any of the 
 
 See the [readme in quakes](quakes/README.md) for more information about the earthquake service
 
-See the readme in [notification-pusher/readme.md](notification-pusher/README.md) for more information about the 
+See the readme in [notification-pusher/readme.md](notification-pusher/README.md) for more information about the notification pushing service.
