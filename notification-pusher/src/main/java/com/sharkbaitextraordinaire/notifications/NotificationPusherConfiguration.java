@@ -11,4 +11,9 @@ public class NotificationPusherConfiguration extends Configuration {
 //    @JsonProperty private String keystorePath;
 //    @JsonProperty private String keystorePassword;
     
+	@JsonProperty("slackConfiguration") private SlackConfiguration slackConfiguration;
+	
+	public SlackConfiguration getSlackConfiguration() {
+		return slackConfiguration;
+	}
 }

@@ -45,6 +45,11 @@
           <artifactId>personal-notifications-notifications</artifactId>
           <version>${project.version}</version>
         </dependency>
+        <dependency>
+        	<groupId>com.ullink.slack</groupId>
+        	<artifactId>simpleslackapi</artifactId>
+        	<version>1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
