@@ -2,7 +2,7 @@ package com.sharkbaitextraordinaire.notifications;
 
 public class SlackConfiguration {
 	private String teamName;
-	private String channelNames;
+	private String channelName;
 	private String token;
 	
 	public String getTeamName() {
@@ -12,10 +12,10 @@ public class SlackConfiguration {
 		this.teamName = teamName;
 	}
 	public String getChannelName() {
-		return channelNames;
+		return channelName;
 	}
-	public void setTeamNames(String channelNames) {
-		this.channelNames = channelNames;
+	public void setChannelName(String channelName) {
+		this.channelName = channelName;
 	}
 	public String getToken() {
 		return token;
