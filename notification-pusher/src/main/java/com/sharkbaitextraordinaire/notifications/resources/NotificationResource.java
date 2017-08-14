@@ -41,6 +41,7 @@ public class NotificationResource {
 		// do some work here to pop that onto a transport to send somewhere else
 		// and then return that we've accepted it
 		logger.warn("accepted a notification: " + notification.getTitle() + " from " + notification.getOrigin());
+		// TODO increment counters for accepted notifications
 		Response response = null;
 		try {
 			notificationsChute.put(notification);
